@@ -4,7 +4,8 @@ using MDCG.WebApi.Repository;
 using MDCG.WebApi.Services;
 using Microsoft.EntityFrameworkCore;
 
-namespace MDCG.WebApi {
+namespace MDCG.WebApi
+{
     public class Program {
         public static void Main(string[] args) {
             var builder = WebApplication.CreateBuilder(args);

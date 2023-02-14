@@ -1,6 +1,7 @@
-﻿using MDCG.WebApi.Data;
+﻿using MDCG.WebApi.Models;
 
-namespace MDCG.WebApi.Services {
+namespace MDCG.WebApi.Services
+{
     public interface IService<T> where T : class, IEntity {
         Task<List<T>> GetAll();
         Task<T> Get(int id);

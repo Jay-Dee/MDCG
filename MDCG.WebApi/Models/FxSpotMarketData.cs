@@ -1,11 +1,14 @@
-﻿using MDCG.WebApi.Data;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MDCG.WebApi.Models {
+namespace MDCG.WebApi.Models
+{
     public class FxSpotMarketData : IEntity {
         public int Id { get; set; }
+
+        [DataType(DataType.Date)]
+        public DateTime BusinesssDate { get; set; } = DateTime.Today;
 
         [Required]
         [DataType(DataType.Currency)]

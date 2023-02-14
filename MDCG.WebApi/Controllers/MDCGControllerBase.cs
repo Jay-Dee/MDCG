@@ -1,8 +1,9 @@
-﻿using MDCG.WebApi.Data;
+﻿using MDCG.WebApi.Models;
 using MDCG.WebApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MDCG.WebApi.Controllers {
+namespace MDCG.WebApi.Controllers
+{
     public abstract class MDCGControllerBase<TEntity, TService> : ControllerBase
         where TEntity : class, IEntity
         where TService : IService<TEntity> {

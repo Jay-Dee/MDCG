@@ -1,5 +1,9 @@
-﻿namespace MDCG.WebApi.Data {
-    public interface IRepository<T> where T : class, IEntity {
+﻿using MDCG.WebApi.Models;
+
+namespace MDCG.WebApi.Repository
+{
+    public interface IRepository<T> where T : class, IEntity
+    {
         Task<List<T>> GetAll();
         Task<T> Get(int id);
         Task<T> Add(T entity);

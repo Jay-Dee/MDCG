@@ -1,7 +1,8 @@
-﻿using MDCG.WebApi.Data;
+﻿using MDCG.WebApi.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace MDCG.WebApi.Repository {
+namespace MDCG.WebApi.Repository
+{
     public abstract class EfCoreRepositoryBase<TEntity, TContext> : IRepository<TEntity>
         where TEntity : class, IEntity
         where TContext : DbContext {
