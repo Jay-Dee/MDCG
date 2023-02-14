@@ -7,6 +7,8 @@ namespace MDCG.WebApi.Data {
             : base(options) {
         }
 
-        public DbSet<User> User { get; set; } = default!;
+        public DbSet<User> Users { get; set; } = default!;
+
+        public DbSet<FxSpotMarketData> FxSpotMarketDatas { get; set; } = default!;
     }
 }
