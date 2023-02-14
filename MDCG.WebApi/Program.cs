@@ -1,4 +1,5 @@
 using MDCG.WebApi.Data;
+using MDCG.WebApi.Models;
 using MDCG.WebApi.Repository;
 using MDCG.WebApi.Services;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +13,11 @@ namespace MDCG.WebApi {
 
             // Add services to the container.
             builder.Services.AddMemoryCache();
-            builder.Services.AddScoped<UserRepository>();
-            builder.Services.AddScoped<UserService>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            builder.Services.AddScoped<IRepository<User>, UserRepository>();
+            builder.Services.AddScoped<IService<User> ,UserService>();
+            
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

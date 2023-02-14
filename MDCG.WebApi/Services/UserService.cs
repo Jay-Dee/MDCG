@@ -1,13 +1,14 @@
-﻿using MDCG.WebApi.Models;
+﻿using MDCG.WebApi.Data;
+using MDCG.WebApi.Models;
 using MDCG.WebApi.Repository;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace MDCG.WebApi.Services {
     public class UserService : IService<User> {
-        private readonly UserRepository _userRepository;
+        private readonly IRepository<User> _userRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public UserService(UserRepository userRepository, IUnitOfWork unitOfWork, IMemoryCache memoryCache) {
+        public UserService(IRepository<User> userRepository, IUnitOfWork unitOfWork, IMemoryCache memoryCache) {
             this._userRepository = userRepository;
             this._unitOfWork = unitOfWork;
         }
