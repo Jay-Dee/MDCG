@@ -10,7 +10,7 @@ namespace MDCG.WebApi.Repository
         private readonly TContext _context;
 
         public EfCoreRepositoryBase(TContext context) {
-            this._context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
         public async Task<TEntity> Add(TEntity entity) {
             _context.Set<TEntity>().Add(entity);
