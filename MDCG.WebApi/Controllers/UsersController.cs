@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace MDCG.WebApi.Controllers {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : MDCGControllerBase<User, IService<User>> {
-        public UsersController(IService<User> service) : base(service) {
+    public class UsersController : MDCGControllerBase<User, IDataManagementService<User>> {
+        public UsersController(IDataManagementService<User> service) : base(service) {
 
         }
     }

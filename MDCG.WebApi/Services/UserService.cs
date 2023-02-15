@@ -5,7 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace MDCG.WebApi.Services
 {
-    public class UserService : ServiceBase<User> {
+    public class UserService : DataManagementServiceBase<User> {
         public UserService(IRepository<User> repository, IUnitOfWork unitOfWork, IMemoryCache memoryCache) : base(repository, unitOfWork, memoryCache) {
         }
     }

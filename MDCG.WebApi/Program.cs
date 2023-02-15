@@ -17,13 +17,13 @@ namespace MDCG.WebApi
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             builder.Services.AddScoped<IRepository<User>, UserRepository>();
-            builder.Services.AddScoped<IService<User> ,UserService>();
+            builder.Services.AddScoped<IDataManagementService<User> ,UserService>();
 
             builder.Services.AddScoped<IRepository<FxSpotMarketData>, FxSpotMarketDataRepository>();
-            builder.Services.AddScoped<IService<FxSpotMarketData>, FxSpotMarketDataService>();
+            builder.Services.AddScoped<IDataManagementService<FxSpotMarketData>, FxSpotMarketDataService>();
 
             builder.Services.AddScoped<IRepository<EquitySpotMarketData>, EquitySpotMarketDataRepository>();
-            builder.Services.AddScoped<IService<EquitySpotMarketData>, EquitySpotMarketDataService>();
+            builder.Services.AddScoped<IDataManagementService<EquitySpotMarketData>, EquitySpotMarketDataService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

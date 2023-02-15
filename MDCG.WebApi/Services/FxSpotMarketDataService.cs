@@ -5,7 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace MDCG.WebApi.Services
 {
-    public class FxSpotMarketDataService : ServiceBase<FxSpotMarketData> {
+    public class FxSpotMarketDataService : DataManagementServiceBase<FxSpotMarketData> {
         public FxSpotMarketDataService(IRepository<FxSpotMarketData> repository, IUnitOfWork unitOfWork, IMemoryCache memoryCache) : base(repository, unitOfWork, memoryCache) {
         }
     }

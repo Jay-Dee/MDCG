@@ -6,11 +6,11 @@ namespace MDCG.WebApi.Controllers
 {
     public abstract class MDCGControllerBase<TEntity, TService> : ControllerBase
         where TEntity : class, IEntity
-        where TService : IService<TEntity> {
+        where TService : IDataManagementService<TEntity> {
         private readonly TService _service;
 
         public MDCGControllerBase(TService repository) {
-            this._service = repository;
+            _service = repository;
         }
 
 
