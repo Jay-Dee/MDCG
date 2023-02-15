@@ -4,57 +4,99 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MDCG.WebApi.Controllers
 {
-    public abstract class MDCGControllerBase<TEntity, TService> : ControllerBase
+    public abstract class MDCGControllerBase<TEntity, TDatamanagementService, TDataValidationService> : ControllerBase
         where TEntity : class, IEntity
-        where TService : IDataManagementService<TEntity> {
-        private readonly TService _service;
+        where TDatamanagementService : IDataManagementService<TEntity> 
+        where TDataValidationService : IDataValidationService<TEntity> {
 
-        public MDCGControllerBase(TService repository) {
-            _service = repository;
+        private readonly TDatamanagementService _datamanagementService;
+        private readonly TDataValidationService _dataValidationService;
+        private readonly ILogger<TEntity> _logger;
+
+        public MDCGControllerBase(TDatamanagementService datamanagementService, TDataValidationService dataValidationService, ILogger<TEntity> logger) {
+            _datamanagementService = datamanagementService;
+            _dataValidationService = dataValidationService;
+            _logger = logger;
         }
 
 
         // GET: api/[controller]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TEntity>>> Get() {
-            return await _service.GetAll();
+            try {
+                return await _datamanagementService.GetAll();
+            } catch(Exception ex) {
+                _logger.LogError(ex.Message, ex.StackTrace);
+                return Problem(ex.Message);
+            }
         }
 
         // GET: api/[controller]/5
         [HttpGet("{id}")]
         public async Task<ActionResult<TEntity>> Get(int id) {
-            var entity = await _service.Get(id);
-            if (entity == null) {
-                return NotFound();
+            try {
+                var entity = await _datamanagementService.Get(id);
+                if (entity == null) {
+                    return NotFound($"Unable to find with id = {id}");
+                } else {
+                    return Ok(entity);
+                }
+            } catch(Exception ex) {
+                _logger.LogError(ex.Message, ex.StackTrace);
+                return Problem(ex.Message);
             }
-            return entity;
         }
 
         // PUT: api/[controller]/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, TEntity entity) {
-            if (id != entity.Id) {
-                return BadRequest();
+            try {
+                if (id != entity.Id) {
+                    return BadRequest();
+                } else {
+                    if (_dataValidationService.Validate(entity).ValidityStatus == ValidationResultType.Success) {
+                        var result = await _datamanagementService.Update(entity);
+                        return NoContent();
+                    } else {
+                        return ValidationProblem("Failed validation");
+                    }
+                }
+            } catch(Exception ex) {
+                _logger.LogError(ex.Message, ex.StackTrace);
+                return Problem(ex.Message);
             }
-            await _service.Update(entity);
-            return NoContent();
         }
 
         // POST: api/[controller]
         [HttpPost]
         public async Task<ActionResult<TEntity>> Post(TEntity entity) {
-            await _service.Add(entity);
-            return CreatedAtAction("Get", new { id = entity.Id }, entity);
+            try {
+                if (_dataValidationService.Validate(entity).ValidityStatus == ValidationResultType.Success) {
+                    var result = await _datamanagementService.Add(entity);
+                    return CreatedAtAction("Get", new { id = entity.Id }, result);
+                } else {
+                    return ValidationProblem("Failed validation");
+                }
+            } catch(Exception ex) {
+                _logger.LogError(ex.Message, ex.StackTrace);
+                return Problem(ex.Message);
+            }
         }
 
         // DELETE: api/[controller]/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<TEntity>> Delete(int id) {
-            var entity = await _service.Delete(id);
-            if (entity == null) {
-                return NotFound();
+        public async Task<IActionResult> Delete(int id) {
+            try {
+                var entity = await _datamanagementService.Delete(id);
+                if (entity == null) {
+                    return NotFound();
+                } else {
+                    return NoContent();
+                }
+            } catch(Exception ex) {
+                _logger.LogError(ex.Message, ex.StackTrace);
+                return Problem(ex.Message);
             }
-            return entity;
         }
     }
 }

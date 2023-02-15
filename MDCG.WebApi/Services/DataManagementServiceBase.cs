@@ -19,7 +19,7 @@ namespace MDCG.WebApi.Services
         public virtual async Task<TEntity> Add(TEntity entity) {
             var result = await _repository.Add(entity);
             if(result != null) {
-                _memoryCache.Set(entity.Id, entity);
+                _memoryCache.Set(GetCacheKey(entity.Id), entity);
             }
             
             return result;
@@ -28,16 +28,17 @@ namespace MDCG.WebApi.Services
         public virtual async Task<TEntity> Delete(int id) {
             var result = await _repository.Delete(id);
             if(result != null) {
-                _memoryCache.Remove(result.Id);
+                _memoryCache.Remove(GetCacheKey(id));
             }
             return result;
         }
 
-        public virtual Task<TEntity> Get(int id) {
-            if (_memoryCache.TryGetValue(id, out var result)) {
-                return Task.FromResult((TEntity)result);
+        public virtual async Task<TEntity> Get(int id) {
+            if (!_memoryCache.TryGetValue(GetCacheKey(id), out TEntity result)) {
+                result = await _repository.Get(id);
+                _memoryCache.Set(GetCacheKey(id), result);
             }
-            return _repository.Get(id);
+            return result;
         }
 
         public virtual Task<List<TEntity>> GetAll() {
@@ -47,10 +48,14 @@ namespace MDCG.WebApi.Services
         public virtual async Task<TEntity> Update(TEntity entity) {
             var result = await _repository.Update(entity);
             if (result != null) {
-                _memoryCache.Set(entity.Id, result);
+                _memoryCache.Set(GetCacheKey(entity.Id), result);
             }
 
             return result;
+        }
+
+        private string GetCacheKey(int id) {
+            return $"{typeof(TEntity)}_{id}";
         }
     }
 }

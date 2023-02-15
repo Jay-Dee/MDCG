@@ -3,6 +3,7 @@ using MDCG.WebApi.Models;
 using MDCG.WebApi.Repository;
 using MDCG.WebApi.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Console;
 
 namespace MDCG.WebApi
 {
@@ -14,16 +15,27 @@ namespace MDCG.WebApi
 
             // Add services to the container.
             builder.Services.AddMemoryCache();
+            builder.Services.AddLogging();
+            builder.Logging.AddSimpleConsole(options => {
+                options.IncludeScopes = false;
+                options.SingleLine = true;
+                options.ColorBehavior = LoggerColorBehavior.Enabled;
+                options.UseUtcTimestamp = true;
+                options.TimestampFormat = "hh:mm:ss:ff  ";
+            });
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             builder.Services.AddScoped<IRepository<User>, UserRepository>();
             builder.Services.AddScoped<IDataManagementService<User> ,UserService>();
+            builder.Services.AddScoped<IDataValidationService<User>, PassThroughDataValidationService<User>>();
 
             builder.Services.AddScoped<IRepository<FxSpotMarketData>, FxSpotMarketDataRepository>();
             builder.Services.AddScoped<IDataManagementService<FxSpotMarketData>, FxSpotMarketDataService>();
+            builder.Services.AddScoped<IDataValidationService<FxSpotMarketData>, PassThroughDataValidationService<FxSpotMarketData>>();
 
             builder.Services.AddScoped<IRepository<EquitySpotMarketData>, EquitySpotMarketDataRepository>();
             builder.Services.AddScoped<IDataManagementService<EquitySpotMarketData>, EquitySpotMarketDataService>();
+            builder.Services.AddScoped<IDataValidationService<EquitySpotMarketData>, PassThroughDataValidationService<EquitySpotMarketData>>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
