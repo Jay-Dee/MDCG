@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 
 namespace MDCG.WebApi.Data {
-    public class MDCGDbContext : DbContext {
+    public class MDCGDbContext : DbContext, IMDCGDbContext {
         public MDCGDbContext(DbContextOptions<MDCGDbContext> options)
             : base(options) {
         }

@@ -1,15 +1,15 @@
-﻿using MDCG.WebApi.Models;
+﻿using MDCG.WebApi.Data;
+using MDCG.WebApi.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace MDCG.WebApi.Repository
 {
     public abstract class EfCoreRepositoryBase<TEntity, TContext> : IRepository<TEntity>
-        where TEntity : class, IEntity
-        where TContext : DbContext {
+        where TEntity : class, IEntity {
 
-        private readonly TContext _context;
+        private readonly MDCGDbContext _context;
 
-        public EfCoreRepositoryBase(TContext context) {
+        public EfCoreRepositoryBase(MDCGDbContext context) {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
         public async Task<TEntity> Add(TEntity entity) {
