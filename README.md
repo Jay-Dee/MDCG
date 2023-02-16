@@ -1,9 +1,10 @@
 # MDCG
 
-### Market Data Contribution Gateway
+## Market Data Contribution Gateway
 
 MDCG is a RESTful .net core webapi implmementation for allowing recording and retrieval of market-data contributions. It uses .netcore6, entity-framework and sql-server for its implmentation.
 
+### The implementation is not complete yet and list of [immediate issues is available here](https://github.com/Jay-Dee/MDCG/issues?q=is%3Aissue+is%3Aopen+sort%3Acreated-asc). 
 ---
 ## Implmentation details
 
