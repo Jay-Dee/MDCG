@@ -13,11 +13,11 @@ The heirarchial composition of injectable/replacable dependencies in the impleme
 graph LR;
 Controller-->IDataValidationService;
 Controller-->IDataManagementService;
-Controller-->LoggingService;
+Controller-->ILogger;
 IDataManagementService-->IRepository;
 IDataManagementService-->IMemoryCache;
-IRepository-->MDCGDbContext
-MDCGDbContext-->DbContext
+IRepository-->MDCGDbContext(MDCGDbContext)
+MDCGDbContext-->DbContext(DbContext)
 ```
 
 ---
