@@ -22,7 +22,7 @@ MDCGDbContext-->DbContext(DbContext)
 
 ---
 
-To run the solution, please follow the following steps:
+To run the solution, please follow the steps below:
 - Checkout code from the [github repo for MDCG](https://github.com/Jay-Dee/MDCG)
 - Build the solution locally
 - In package-manager console, run the following to generate the local SQL Server db
