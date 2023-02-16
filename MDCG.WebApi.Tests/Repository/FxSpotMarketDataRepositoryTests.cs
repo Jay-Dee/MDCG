@@ -13,9 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MDCG.WebApi.Tests.Repository {
-    public abstract class RepositoryTests<TEntity, TRepository> 
-        where TEntity : class, IEntity 
-        where TRepository: IRepository<TEntity> {
+    public class FxSpotMarketDataRepositoryTests {
         [Fact]
         public void Constructor_WithValidDbContext_DoesNotThrowException() {
             var dbContext = new MDCGDbContext(new DbContextOptionsBuilder<MDCGDbContext>().UseInMemoryDatabase(nameof(Constructor_WithValidDbContext_DoesNotThrowException)).Options);
@@ -28,8 +26,8 @@ namespace MDCG.WebApi.Tests.Repository {
         }
 
         [Fact]
-        public async Task Add_SavesUserAsync_Correctly() {
-            var dbContext = new MDCGDbContext(new DbContextOptionsBuilder<MDCGDbContext>().UseInMemoryDatabase(nameof(Add_SavesUserAsync_Correctly)).Options);
+        public async Task Add_SavesFxSpotMarketDataAsync_Correctly() {
+            var dbContext = new MDCGDbContext(new DbContextOptionsBuilder<MDCGDbContext>().UseInMemoryDatabase(nameof(Add_SavesFxSpotMarketDataAsync_Correctly)).Options);
             var userRepo = ConstructRepository(dbContext);
             var stubUser = ConstructEntity(1);
 
@@ -37,19 +35,19 @@ namespace MDCG.WebApi.Tests.Repository {
 
             addedUser.Should().NotBeNull();
             addedUser.Should().BeEquivalentTo(stubUser);
-            dbContext.Users.Count().Should().Be(1);
+            dbContext.FxSpotMarketDatas.Count().Should().Be(1);
 
             await userRepo.Delete(1);
         }
 
         [Fact]
-        public async Task Delete_ForValidExistingUser_DeletesSuccessfully() {
-            var dbContext = new MDCGDbContext(new DbContextOptionsBuilder<MDCGDbContext>().UseInMemoryDatabase("InMemoryUsersDb").Options);
+        public async Task Delete_ForValidExistingFxSpotMarketData_DeletesSuccessfully() {
+            var dbContext = new MDCGDbContext(new DbContextOptionsBuilder<MDCGDbContext>().UseInMemoryDatabase("Delete_ForValidExistingFxSpotMarketData_DeletesSuccessfully").Options);
             var userRepo = ConstructRepository(dbContext);
             var stubUser = ConstructEntity(1);
 
             await userRepo.Add(stubUser);
-            dbContext.Users.Count().Should().Be(1);
+            dbContext.FxSpotMarketDatas.Count().Should().Be(1);
 
             var deletedUser = await userRepo.Delete(1);
             deletedUser.Should().NotBeNull();
@@ -58,32 +56,29 @@ namespace MDCG.WebApi.Tests.Repository {
         }
 
         [Fact]
-        public async Task Get_ForValidExistingUserId_ReturnsUserCorrectly() {
+        public async Task Get_ForValidExistingFxSpotMarketDataId_ReturnsUserCorrectly() {
             var dbContext = new MDCGDbContext(new DbContextOptionsBuilder<MDCGDbContext>().UseInMemoryDatabase("InMemoryUsersDb").Options);
             var userRepo = ConstructRepository(dbContext);
+            var stubUser = ConstructEntity(1);
+            await userRepo.Add(stubUser);
+            dbContext.FxSpotMarketDatas.Count().Should().Be(1);
 
-            for (int userCounter = 1; userCounter <= 5; userCounter++) {
-                var stubUser = ConstructEntity(userCounter);
-            }
-            dbContext.Users.Count().Should().Be(5);
+            var extractedUser = await userRepo.Get(1);
 
-            for (int userCounter = 1; userCounter <= 5; userCounter++) {
-                var extractedUser = await userRepo.Get(userCounter);
-
-                extractedUser.Should().NotBeNull();
-            }
+            extractedUser.Should().NotBeNull();
+            extractedUser.Should().BeEquivalentTo(stubUser);
         }
 
         [Fact]
-        public async Task GetAll_ForValidExistingUsers_ReturnsAllUsersCorrectly() {
-            var dbContext = new MDCGDbContext(new DbContextOptionsBuilder<MDCGDbContext>().UseInMemoryDatabase(nameof(GetAll_ForValidExistingUsers_ReturnsAllUsersCorrectly)).Options);
+        public async Task GetAll_ForValidExistingFxSpotMarketDatas_ReturnsAllUsersCorrectly() {
+            var dbContext = new MDCGDbContext(new DbContextOptionsBuilder<MDCGDbContext>().UseInMemoryDatabase(nameof(GetAll_ForValidExistingFxSpotMarketDatas_ReturnsAllUsersCorrectly)).Options);
             var userRepo = ConstructRepository(dbContext);
 
             for (int userCounter = 1; userCounter <= 5; userCounter++) {
                 var stubUser = ConstructEntity(userCounter);
                 await userRepo.Add(stubUser);
             }
-            dbContext.Users.Count().Should().Be(5);
+            dbContext.FxSpotMarketDatas.Count().Should().Be(5);
 
             var extractedUsers = await userRepo.GetAll();
 
@@ -95,13 +90,13 @@ namespace MDCG.WebApi.Tests.Repository {
         }
 
         [Fact (Skip = "Investigate AsNoTrackingWithIdentityResolution() behaviour")]
-        public async Task Update_ForValidExistingUser_UpdatesSuccessfully() {
+        public async Task Update_ForValidExistingFxSpotMarketData_UpdatesSuccessfully() {
             var dbContext = new MDCGDbContext(new DbContextOptionsBuilder<MDCGDbContext>().UseInMemoryDatabase("InMemoryUsersDb").Options);
             var userRepo = ConstructRepository(dbContext);
             var stubUser = ConstructEntity(1);
 
             await userRepo.Add(stubUser);
-            dbContext.Users.Count().Should().Be(1);
+            dbContext.FxSpotMarketDatas.Count().Should().Be(1);
 
             var userToUpdate = ConstructEntity(1);
             var updatedUser = await userRepo.Update(userToUpdate);
@@ -110,8 +105,12 @@ namespace MDCG.WebApi.Tests.Repository {
             dbContext.Users.Count().Should().Be(1);
         }
 
-        public abstract TRepository ConstructRepository(MDCGDbContext dbContext);
+        public FxSpotMarketDataRepository ConstructRepository(MDCGDbContext dbContext) {
+            return new FxSpotMarketDataRepository(dbContext);
+        }
 
-        public abstract TEntity ConstructEntity(int id);
+        public FxSpotMarketData ConstructEntity(int id) {
+            return new FxSpotMarketData { Id = id, BaseCurrency = "GBP", CounterCurrency = "INR", Ask = 10, Mid = 100, Bid = 110, BusinesssDate = DateTime.Today};
+        }
     }
 }
