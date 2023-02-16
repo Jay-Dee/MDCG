@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace WebApi2.Migrations
+namespace MDCG.WebApi.Migrations
 {
     [DbContext(typeof(MDCGDbContext))]
-    [Migration("20230214174643_EquitySpot")]
-    partial class EquitySpot
+    [Migration("20230216061702_Baseline2")]
+    partial class Baseline2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,6 +23,46 @@ namespace WebApi2.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("MDCG.WebApi.Models.EquitySpotMarketData", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<decimal>("Ask")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Bid")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("BusinesssDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<string>("LongName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("Mid")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Ticker")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EquitySpotMarketDatas");
+                });
 
             modelBuilder.Entity("MDCG.WebApi.Models.FxSpotMarketData", b =>
                 {
@@ -37,7 +77,8 @@ namespace WebApi2.Migrations
 
                     b.Property<string>("BaseCurrency")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
 
                     b.Property<decimal>("Bid")
                         .HasColumnType("decimal(18,2)");
@@ -47,7 +88,8 @@ namespace WebApi2.Migrations
 
                     b.Property<string>("CounterCurrency")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
 
                     b.Property<decimal>("Mid")
                         .HasColumnType("decimal(18,2)");

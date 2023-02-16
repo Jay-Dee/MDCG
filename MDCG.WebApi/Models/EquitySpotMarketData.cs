@@ -10,6 +10,7 @@ namespace MDCG.WebApi.Models {
         public DateTime BusinesssDate { get; set; } = DateTime.Today;
 
         [Required]
+        [MaxLength(3)]
         [DataType(DataType.Currency)]
         public string Currency { get; set; }
 

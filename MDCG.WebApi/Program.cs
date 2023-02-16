@@ -11,7 +11,7 @@ namespace MDCG.WebApi
         public static void Main(string[] args) {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddDbContext<MDCGDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("MDCGDbContext") ?? throw new InvalidOperationException("Connection string 'MDCGDbContext' not found.")));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("MDCGSqlServer") ?? throw new InvalidOperationException("Connection string 'MDCGSqlServer' not found.")));
 
             // Add services to the container.
             builder.Services.AddMemoryCache();

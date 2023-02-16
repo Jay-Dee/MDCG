@@ -48,7 +48,8 @@ namespace MDCG.WebApi.Controllers
         }
 
         // PUT: api/[controller]/5
-        [HttpPut("{id}")]
+        //[HttpPut("{id}")]
+        // TODO : Pending invesitgation for test Update_ForValidExistingFxSpotMarketData_UpdatesSuccessfully
         public async Task<IActionResult> Put(int id, TEntity entity) {
             try {
                 if (id != entity.Id) {
