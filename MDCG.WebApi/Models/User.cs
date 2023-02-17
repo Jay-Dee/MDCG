@@ -18,5 +18,8 @@ namespace MDCG.WebApi.Models
         public bool CanWrite { get; set; }
 
         public bool IsActive { get; set; }
+
+        [Timestamp]
+        public byte[]? RowVersion { get; set; }
     }
 }

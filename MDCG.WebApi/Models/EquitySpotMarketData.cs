@@ -32,5 +32,8 @@ namespace MDCG.WebApi.Models {
         [Required]
         [Column(TypeName = "decimal(18,2)")]
         public decimal Mid { get; set; }
+
+        [Timestamp]
+        public byte[]? RowVersion { get; set; }
     }
 }
