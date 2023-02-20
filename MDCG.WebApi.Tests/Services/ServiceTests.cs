@@ -27,7 +27,7 @@ namespace MDCG.WebApi.Tests.Services {
         public async Task Add_ForValidUser_AddsToRepoAndToCacheSuccessfullyAsync() {
             TEntity stubUserToAdd = ConstructEntity(1);
             var mqRepository = new Mock<IRepository<TEntity>>();
-            mqRepository.Setup(_ => _.Add(stubUserToAdd)).Returns(Task.FromResult(stubUserToAdd));
+            mqRepository.Setup(_ => _.Add(stubUserToAdd)).Verifiable();
             var mqUnitOfWork = new Mock<IUnitOfWork>();
             var mqCacheEntry = new Mock<ICacheEntry>();
             var mqMemoryCache = new Mock<IMemoryCache>();
@@ -44,27 +44,32 @@ namespace MDCG.WebApi.Tests.Services {
 
         [Fact]
         public async Task Delete_ForValidUser_DeletesFromRepoAndCacheSuccessfully() {
+            object cacheKey = $"MDCG.WebApi.Models.{(typeof(TEntity)).Name}_1";
             var stubUserToDelete = ConstructEntity(1);
+            object stubUser = stubUserToDelete;
             var mqRepository = new Mock<IRepository<TEntity>>();
-            mqRepository.Setup(_ => _.Delete(1)).Returns(Task.FromResult(stubUserToDelete));
+            mqRepository.Setup(_ => _.Remove(stubUserToDelete)).Verifiable();
             var mqUnitOfWork = new Mock<IUnitOfWork>();
             var mqCacheEntry = new Mock<ICacheEntry>();
             var mqMemoryCache = new Mock<IMemoryCache>();
-            mqMemoryCache.Setup(_ => _.Remove(It.IsAny<string>()));
+            mqMemoryCache.Setup(_ => _.TryGetValue(It.IsAny<object>(), out stubUser)).Returns(true);
+            mqMemoryCache.Setup(_ => _.Remove(It.IsAny<string>())).Verifiable();
+            mqMemoryCache.Setup(_ => _.CreateEntry(It.IsAny<string>())).Returns(mqCacheEntry.Object);
 
             var userService = ConstructService(mqRepository, mqUnitOfWork, mqMemoryCache);
             var userDeleted = await userService.Delete(stubUserToDelete.Id);
 
             Assert.Equal(stubUserToDelete, userDeleted);
-            mqRepository.Verify(_ => _.Delete(1), Times.Once);
-            mqMemoryCache.Verify(_ => _.Remove($"MDCG.WebApi.Models.{(typeof(TEntity)).Name}_1"), Times.Once);
+            mqRepository.Verify(_ => _.Remove(stubUserToDelete), Times.Once);
+            mqMemoryCache.Verify(_ => _.TryGetValue(cacheKey, out stubUser), Times.Once);
+            mqMemoryCache.Verify(_ => _.CreateEntry(cacheKey), Times.AtMostOnce);
         }
 
         [Fact]
         public async Task GetWithCacheHit_ForValidUser_GetsSingleUserFromCacheSuccessfully() {
             object stubUserToGet = ConstructEntity(1);
             var mqRepository = new Mock<IRepository<TEntity>>();
-            mqRepository.Setup(_ => _.Get(1)).Returns(Task.FromResult((TEntity)stubUserToGet));
+            mqRepository.Setup(_ => _.GetById(1)).Returns(Task.FromResult((TEntity)stubUserToGet));
             var mqUnitOfWork = new Mock<IUnitOfWork>();
             var mqCacheEntry = new Mock<ICacheEntry>();
             var mqMemoryCache = new Mock<IMemoryCache>();
@@ -74,7 +79,7 @@ namespace MDCG.WebApi.Tests.Services {
             var userExtracted = await userService.Get(((TEntity)stubUserToGet).Id);
 
             Assert.Equal(stubUserToGet, userExtracted);
-            mqRepository.Verify(_ => _.Get(1), Times.Never);
+            mqRepository.Verify(_ => _.GetById(1), Times.Never);
             mqMemoryCache.Verify(_ => _.TryGetValue($"MDCG.WebApi.Models.{(typeof(TEntity)).Name}_1", out stubUserToGet), Times.Once);
         }
 
@@ -82,7 +87,7 @@ namespace MDCG.WebApi.Tests.Services {
         public async Task GetWithCacheMiss_ForValidUser_GetsSingleUserFromRepoSuccessfully() {
             object stubUserToGet = ConstructEntity(1);
             var mqRepository = new Mock<IRepository<TEntity>>();
-            mqRepository.Setup(_ => _.Get(1)).Returns(Task.FromResult((TEntity)stubUserToGet));
+            mqRepository.Setup(_ => _.GetById(1)).Returns(Task.FromResult((TEntity)stubUserToGet));
             var mqUnitOfWork = new Mock<IUnitOfWork>();
             var mqCacheEntry = new Mock<ICacheEntry>();
             var mqMemoryCache = new Mock<IMemoryCache>();
@@ -93,7 +98,7 @@ namespace MDCG.WebApi.Tests.Services {
             var userExtracted = await userService.Get(((TEntity)stubUserToGet).Id);
 
             Assert.Equal(stubUserToGet, userExtracted);
-            mqRepository.Verify(_ => _.Get(1), Times.Once);
+            mqRepository.Verify(_ => _.GetById(1), Times.Once);
             mqMemoryCache.Verify(_ => _.TryGetValue($"MDCG.WebApi.Models.{(typeof(TEntity)).Name}_1", out stubUserToGet), Times.Once);
             mqMemoryCache.Verify(_ => _.CreateEntry($"MDCG.WebApi.Models.{(typeof(TEntity)).Name}_1"), Times.Once);
         }
@@ -106,7 +111,7 @@ namespace MDCG.WebApi.Tests.Services {
                 ConstructEntity(2)
         };
             var mqRepository = new Mock<IRepository<TEntity>>();
-            mqRepository.Setup(_ => _.GetAll()).Returns(Task.FromResult(stubUsers));
+            mqRepository.Setup(_ => _.GetAll()).Returns(stubUsers);
             var mqUnitOfWork = new Mock<IUnitOfWork>();
             var mqMemoryCache = new Mock<IMemoryCache>();
 
@@ -114,7 +119,7 @@ namespace MDCG.WebApi.Tests.Services {
             var userService = ConstructService(mqRepository, mqUnitOfWork, mqMemoryCache);
             var usersExtracted = await userService.GetAll();
 
-            Assert.Equal(stubUsers.Count, usersExtracted.Count);
+            Assert.Equal(stubUsers.Count, usersExtracted.Count());
             Assert.Equal(stubUsers, usersExtracted);
             mqRepository.Verify(_ => _.GetAll(), Times.Once);
         }
@@ -123,7 +128,7 @@ namespace MDCG.WebApi.Tests.Services {
         public async Task Update_ForValidUser_UpdatesSingleUserFromRepoSuccessfully() {
             TEntity stubUserToUpdate = ConstructEntity(1);
             var mqRepository = new Mock<IRepository<TEntity>>();
-            mqRepository.Setup(_ => _.Update(stubUserToUpdate)).Returns(Task.FromResult(stubUserToUpdate));
+            mqRepository.Setup(_ => _.Update(stubUserToUpdate)).Verifiable();
             var mqUnitOfWork = new Mock<IUnitOfWork>();
             var mqCacheEntry = new Mock<ICacheEntry>();
             var mqMemoryCache = new Mock<IMemoryCache>();

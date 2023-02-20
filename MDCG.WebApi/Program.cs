@@ -2,6 +2,7 @@ using MDCG.WebApi.Data;
 using MDCG.WebApi.Models;
 using MDCG.WebApi.Repository;
 using MDCG.WebApi.Services;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Console;
 
@@ -25,17 +26,13 @@ namespace MDCG.WebApi
             });
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            builder.Services.AddScoped<IRepository<User>, UserRepository>();
+            builder.Services.AddScoped(typeof(IRepository<>), typeof(EfCoreRepository<>));
+            builder.Services.AddScoped(typeof(IDataValidationService<>), typeof(PassThroughDataValidationService<>));
+
             builder.Services.AddScoped<IDataManagementService<User> ,UserService>();
-            builder.Services.AddScoped<IDataValidationService<User>, PassThroughDataValidationService<User>>();
-
-            builder.Services.AddScoped<IRepository<FxSpotMarketData>, FxSpotMarketDataRepository>();
             builder.Services.AddScoped<IDataManagementService<FxSpotMarketData>, FxSpotMarketDataService>();
-            builder.Services.AddScoped<IDataValidationService<FxSpotMarketData>, PassThroughDataValidationService<FxSpotMarketData>>();
-
-            builder.Services.AddScoped<IRepository<EquitySpotMarketData>, EquitySpotMarketDataRepository>();
             builder.Services.AddScoped<IDataManagementService<EquitySpotMarketData>, EquitySpotMarketDataService>();
-            builder.Services.AddScoped<IDataValidationService<EquitySpotMarketData>, PassThroughDataValidationService<EquitySpotMarketData>>();
+            
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

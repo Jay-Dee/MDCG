@@ -24,7 +24,7 @@ namespace MDCG.WebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TEntity>>> Get() {
             try {
-                return await _datamanagementService.GetAll();
+                return Ok(await _datamanagementService.GetAll());
             } catch(Exception ex) {
                 _logger.LogError(ex.Message, ex.StackTrace);
                 return Problem(ex.Message);
